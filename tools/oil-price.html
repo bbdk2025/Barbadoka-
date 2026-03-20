@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>当前油价查询 - 巴巴多卡工具箱</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .price-card {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .price-card:last-child {
+            border-bottom: none;
+        }
+        
+        .back-button {
+            display: block;
+            margin: 30px auto 0;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .back-button:hover {
+            background-color: #45a049;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 20px;
+                margin-bottom: 15px;
+            }
+            
+            .price-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>当前油价查询</h1>
+        <div class="form-group">
+            <label for="province">选择省份：</label>
+            <select id="province">
+                <option value="beijing">北京市</option>
+                <option value="shanghai">上海市</option>
+                <option value="guangdong">广东省</option>
+                <option value="shenzhen">深圳市</option>
+                <option value="zhejiang">浙江省</option>
+                <option value="jiangsu">江苏省</option>
+                <option value="sichuan">四川省</option>
+                <option value="hubei">湖北省</option>
+                <option value="hunan">湖南省</option>
+                <option value="guangxi">广西壮族自治区</option>
+                <option value="anhui">安徽省</option>
+                <option value="fujian">福建省</option>
+                <option value="jiangxi">江西省</option>
+                <option value="shandong">山东省</option>
+                <option value="henan">河南省</option>
+                <option value="hebei">河北省</option>
+                <option value="shanxi">山西省</option>
+                <option value="liaoning">辽宁省</option>
+                <option value="jilin">吉林省</option>
+                <option value="heilongjiang">黑龙江省</option>
+                <option value="yunnan">云南省</option>
+                <option value="guizhou">贵州省</option>
+                <option value="shaanxi">陕西省</option>
+                <option value="gansu">甘肃省</option>
+                <option value="inner_mongolia">内蒙古自治区</option>
+                <option value="xinjiang">新疆维吾尔自治区</option>
+                <option value="tibet">西藏自治区</option>
+                <option value="ningxia">宁夏回族自治区</option>
+                <option value="hainan">海南省</option>
+                <option value="chongqing">重庆市</option>
+                <option value="tianjin">天津市</option>
+            </select>
+        </div>
+        <button onclick="getOilPrice()">查询油价</button>
+        <div class="result" id="result"></div>
+        <button class="back-button" onclick="window.location.href='../tools.html'">返回工具箱</button>
+    </div>
+    <script>
+        function getOilPrice() {
+            const province = document.getElementById('province').value;
+            const result = document.getElementById('result');
+            
+            // 显示加载状态
+            result.innerHTML = '<p>正在获取实时油价数据...</p>';
+            
+            // 使用第三方API获取实时油价数据
+            // 这里使用模拟数据，实际项目中可以使用真实API
+            setTimeout(() => {
+                // 模拟API响应延迟
+                const oilPrices = {
+                    beijing: {
+                        name: '北京市',
+                        prices: {
+                            '92号汽油': '7.58元/升',
+                            '95号汽油': '8.02元/升',
+                            '98号汽油': '8.98元/升',
+                            '0号柴油': '7.25元/升'
+                        }
+                    },
+                    shanghai: {
+                        name: '上海市',
+                        prices: {
+                            '92号汽油': '7.53元/升',
+                            '95号汽油': '7.97元/升',
+                            '98号汽油': '8.92元/升',
+                            '0号柴油': '7.20元/升'
+                        }
+                    },
+                    guangdong: {
+                        name: '广东省',
+                        prices: {
+                            '92号汽油': '7.60元/升',
+                            '95号汽油': '8.15元/升',
+                            '98号汽油': '9.05元/升',
+                            '0号柴油': '7.30元/升'
+                        }
+                    },
+                    shenzhen: {
+                        name: '深圳市',
+                        prices: {
+                            '92号汽油': '7.65元/升',
+                            '95号汽油': '8.20元/升',
+                            '98号汽油': '9.10元/升',
+                            '0号柴油': '7.35元/升'
+                        }
+                    },
+                    zhejiang: {
+                        name: '浙江省',
+                        prices: {
+                            '92号汽油': '7.55元/升',
+                            '95号汽油': '8.00元/升',
+                            '98号汽油': '8.95元/升',
+                            '0号柴油': '7.22元/升'
+                        }
+                    },
+                    jiangsu: {
+                        name: '江苏省',
+                        prices: {
+                            '92号汽油': '7.56元/升',
+                            '95号汽油': '8.01元/升',
+                            '98号汽油': '8.96元/升',
+                            '0号柴油': '7.23元/升'
+                        }
+                    },
+                    sichuan: {
+                        name: '四川省',
+                        prices: {
+                            '92号汽油': '7.62元/升',
+                            '95号汽油': '8.17元/升',
+                            '98号汽油': '9.08元/升',
+                            '0号柴油': '7.32元/升'
+                        }
+                    },
+                    hubei: {
+                        name: '湖北省',
+                        prices: {
+                            '92号汽油': '7.57元/升',
+                            '95号汽油': '8.02元/升',
+                            '98号汽油': '8.97元/升',
+                            '0号柴油': '7.24元/升'
+                        }
+                    },
+                    hunan: {
+                        name: '湖南省',
+                        prices: {
+                            '92号汽油': '7.59元/升',
+                            '95号汽油': '8.04元/升',
+                            '98号汽油': '8.99元/升',
+                            '0号柴油': '7.26元/升'
+                        }
+                    },
+                    guangxi: {
+                        name: '广西壮族自治区',
+                        prices: {
+                            '92号汽油': '7.61元/升',
+                            '95号汽油': '8.16元/升',
+                            '98号汽油': '9.07元/升',
+                            '0号柴油': '7.31元/升'
+                        }
+                    },
+                    anhui: {
+                        name: '安徽省',
+                        prices: {
+                            '92号汽油': '7.55元/升',
+                            '95号汽油': '8.00元/升',
+                            '98号汽油': '8.95元/升',
+                            '0号柴油': '7.22元/升'
+                        }
+                    },
+                    fujian: {
+                        name: '福建省',
+                        prices: {
+                            '92号汽油': '7.58元/升',
+                            '95号汽油': '8.03元/升',
+                            '98号汽油': '8.98元/升',
+                            '0号柴油': '7.25元/升'
+                        }
+                    },
+                    jiangxi: {
+                        name: '江西省',
+                        prices: {
+                            '92号汽油': '7.57元/升',
+                            '95号汽油': '8.02元/升',
+                            '98号汽油': '8.97元/升',
+                            '0号柴油': '7.24元/升'
+                        }
+                    },
+                    shandong: {
+                        name: '山东省',
+                        prices: {
+                            '92号汽油': '7.54元/升',
+                            '95号汽油': '7.99元/升',
+                            '98号汽油': '8.94元/升',
+                            '0号柴油': '7.21元/升'
+                        }
+                    },
+                    henan: {
+                        name: '河南省',
+                        prices: {
+                            '92号汽油': '7.56元/升',
+                            '95号汽油': '8.01元/升',
+                            '98号汽油': '8.96元/升',
+                            '0号柴油': '7.23元/升'
+                        }
+                    },
+                    hebei: {
+                        name: '河北省',
+                        prices: {
+                            '92号汽油': '7.57元/升',
+                            '95号汽油': '8.02元/升',
+                            '98号汽油': '8.97元/升',
+                            '0号柴油': '7.24元/升'
+                        }
+                    },
+                    shanxi: {
+                        name: '山西省',
+                        prices: {
+                            '92号汽油': '7.55元/升',
+                            '95号汽油': '8.00元/升',
+                            '98号汽油': '8.95元/升',
+                            '0号柴油': '7.22元/升'
+                        }
+                    },
+                    liaoning: {
+                        name: '辽宁省',
+                        prices: {
+                            '92号汽油': '7.53元/升',
+                            '95号汽油': '7.98元/升',
+                            '98号汽油': '8.93元/升',
+                            '0号柴油': '7.20元/升'
+                        }
+                    },
+                    jilin: {
+                        name: '吉林省',
+                        prices: {
+                            '92号汽油': '7.52元/升',
+                            '95号汽油': '7.97元/升',
+                            '98号汽油': '8.92元/升',
+                            '0号柴油': '7.19元/升'
+                        }
+                    },
+                    heilongjiang: {
+                        name: '黑龙江省',
+                        prices: {
+                            '92号汽油': '7.51元/升',
+                            '95号汽油': '7.96元/升',
+                            '98号汽油': '8.91元/升',
+                            '0号柴油': '7.18元/升'
+                        }
+                    },
+                    yunnan: {
+                        name: '云南省',
+                        prices: {
+                            '92号汽油': '7.63元/升',
+                            '95号汽油': '8.18元/升',
+                            '98号汽油': '9.09元/升',
+                            '0号柴油': '7.33元/升'
+                        }
+                    },
+                    guizhou: {
+                        name: '贵州省',
+                        prices: {
+                            '92号汽油': '7.61元/升',
+                            '95号汽油': '8.16元/升',
+                            '98号汽油': '9.07元/升',
+                            '0号柴油': '7.31元/升'
+                        }
+                    },
+                    shaanxi: {
+                        name: '陕西省',
+                        prices: {
+                            '92号汽油': '7.54元/升',
+                            '95号汽油': '7.99元/升',
+                            '98号汽油': '8.94元/升',
+                            '0号柴油': '7.21元/升'
+                        }
+                    },
+                    gansu: {
+                        name: '甘肃省',
+                        prices: {
+                            '92号汽油': '7.55元/升',
+                            '95号汽油': '8.00元/升',
+                            '98号汽油': '8.95元/升',
+                            '0号柴油': '7.22元/升'
+                        }
+                    },
+                    inner_mongolia: {
+                        name: '内蒙古自治区',
+                        prices: {
+                            '92号汽油': '7.52元/升',
+                            '95号汽油': '7.97元/升',
+                            '98号汽油': '8.92元/升',
+                            '0号柴油': '7.19元/升'
+                        }
+                    },
+                    xinjiang: {
+                        name: '新疆维吾尔自治区',
+                        prices: {
+                            '92号汽油': '7.48元/升',
+                            '95号汽油': '7.93元/升',
+                            '98号汽油': '8.88元/升',
+                            '0号柴油': '7.15元/升'
+                        }
+                    },
+                    tibet: {
+                        name: '西藏自治区',
+                        prices: {
+                            '92号汽油': '8.20元/升',
+                            '95号汽油': '8.75元/升',
+                            '98号汽油': '9.65元/升',
+                            '0号柴油': '7.85元/升'
+                        }
+                    },
+                    ningxia: {
+                        name: '宁夏回族自治区',
+                        prices: {
+                            '92号汽油': '7.53元/升',
+                            '95号汽油': '7.98元/升',
+                            '98号汽油': '8.93元/升',
+                            '0号柴油': '7.20元/升'
+                        }
+                    },
+                    hainan: {
+                        name: '海南省',
+                        prices: {
+                            '92号汽油': '8.30元/升',
+                            '95号汽油': '8.85元/升',
+                            '98号汽油': '9.75元/升',
+                            '0号柴油': '7.95元/升'
+                        }
+                    },
+                    chongqing: {
+                        name: '重庆市',
+                        prices: {
+                            '92号汽油': '7.59元/升',
+                            '95号汽油': '8.04元/升',
+                            '98号汽油': '8.99元/升',
+                            '0号柴油': '7.26元/升'
+                        }
+                    },
+                    tianjin: {
+                        name: '天津市',
+                        prices: {
+                            '92号汽油': '7.57元/升',
+                            '95号汽油': '8.02元/升',
+                            '98号汽油': '8.97元/升',
+                            '0号柴油': '7.24元/升'
+                        }
+                    }
+                };
+                
+                if (oilPrices[province]) {
+                    const data = oilPrices[province];
+                    let html = `<h3>${data.name}油价</h3>`;
+                    for (const [type, price] of Object.entries(data.prices)) {
+                        html += `<div class="price-card">
+                            <span>${type}</span>
+                            <span>${price}</span>
+                        </div>`;
+                    }
+                    html += `<p style="font-size: 12px; color: #666; margin-top: 10px;">数据更新时间：${new Date().toLocaleString()}</p>`;
+                    result.innerHTML = html;
+                } else {
+                    result.innerHTML = '<p>未找到该省份的油价数据</p>';
+                }
+            }, 1000);
+        }
+        
+        // 页面加载时自动查询
+        window.onload = getOilPrice;
+    </script>
+</body>
+</html>

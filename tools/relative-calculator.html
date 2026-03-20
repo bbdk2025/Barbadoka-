@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>亲戚关系计算器 - 巴巴多卡工具箱</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .back-button {
+            display: block;
+            margin: 30px auto 0;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .back-button:hover {
+            background-color: #45a049;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 20px;
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>亲戚关系计算器</h1>
+        <div class="form-group">
+            <label for="relation1">我的角色：</label>
+            <select id="relation1">
+                <option value="myself">我</option>
+                <option value="father">父亲</option>
+                <option value="mother">母亲</option>
+                <option value="son">儿子</option>
+                <option value="daughter">女儿</option>
+                <option value="brother">兄弟</option>
+                <option value="sister">姐妹</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="relation2">对方角色：</label>
+            <select id="relation2">
+                <option value="father">父亲</option>
+                <option value="mother">母亲</option>
+                <option value="son">儿子</option>
+                <option value="daughter">女儿</option>
+                <option value="brother">兄弟</option>
+                <option value="sister">姐妹</option>
+                <option value="grandfather">祖父</option>
+                <option value="grandmother">祖母</option>
+                <option value="grandson">孙子</option>
+                <option value="granddaughter">孙女</option>
+            </select>
+        </div>
+        <button onclick="calculateRelation()">计算关系</button>
+        <div class="result" id="result"></div>
+        <button class="back-button" onclick="window.location.href='../tools.html'">返回工具箱</button>
+    </div>
+    <script>
+        // 亲戚关系映射表
+        const relationMap = {
+            myself: {
+                father: '父亲',
+                mother: '母亲',
+                son: '儿子',
+                daughter: '女儿',
+                brother: '兄弟',
+                sister: '姐妹',
+                grandfather: '祖父',
+                grandmother: '祖母',
+                grandson: '孙子',
+                granddaughter: '孙女'
+            },
+            father: {
+                father: '祖父',
+                mother: '祖母',
+                son: '兄弟',
+                daughter: '姐妹',
+                brother: '伯父/叔父',
+                sister: '姑姑',
+                grandfather: '曾祖父',
+                grandmother: '曾祖母',
+                grandson: '侄子',
+                granddaughter: '侄女'
+            },
+            mother: {
+                father: '外祖父',
+                mother: '外祖母',
+                son: '兄弟',
+                daughter: '姐妹',
+                brother: '舅舅',
+                sister: '阿姨',
+                grandfather: '外曾祖父',
+                grandmother: '外曾祖母',
+                grandson: '外甥',
+                granddaughter: '外甥女'
+            },
+            son: {
+                father: '祖父',
+                mother: '祖母',
+                son: '孙子',
+                daughter: '孙女',
+                brother: '侄子',
+                sister: '侄女',
+                grandfather: '曾祖父',
+                grandmother: '曾祖母',
+                grandson: '曾孙子',
+                granddaughter: '曾孙女'
+            },
+            daughter: {
+                father: '祖父',
+                mother: '祖母',
+                son: '外孙',
+                daughter: '外孙女',
+                brother: '侄子',
+                sister: '侄女',
+                grandfather: '曾祖父',
+                grandmother: '曾祖母',
+                grandson: '曾外孙',
+                granddaughter: '曾外孙女'
+            },
+            brother: {
+                father: '父亲',
+                mother: '母亲',
+                son: '侄子',
+                daughter: '侄女',
+                brother: '兄弟',
+                sister: '姐妹',
+                grandfather: '祖父',
+                grandmother: '祖母',
+                grandson: '侄孙子',
+                granddaughter: '侄孙女'
+            },
+            sister: {
+                father: '父亲',
+                mother: '母亲',
+                son: '外甥',
+                daughter: '外甥女',
+                brother: '兄弟',
+                sister: '姐妹',
+                grandfather: '祖父',
+                grandmother: '祖母',
+                grandson: '外甥孙子',
+                granddaughter: '外甥孙女'
+            }
+        };
+        
+        function calculateRelation() {
+            const relation1 = document.getElementById('relation1').value;
+            const relation2 = document.getElementById('relation2').value;
+            const result = document.getElementById('result');
+            
+            if (relationMap[relation1] && relationMap[relation1][relation2]) {
+                result.innerHTML = `<p>对方是您的：<span style="font-weight: bold;">${relationMap[relation1][relation2]}</span></p>`;
+            } else {
+                result.innerHTML = '<p>无法计算该关系</p>';
+            }
+        }
+    </script>
+</body>
+</html>

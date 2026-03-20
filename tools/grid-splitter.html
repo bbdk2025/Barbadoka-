@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>九宫格切图 - 巴巴多卡工具箱</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .image-preview {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .image-preview img {
+            max-width: 100%;
+            max-height: 300px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .grid-item {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .grid-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .back-button {
+            display: block;
+            margin: 30px auto 0;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .back-button:hover {
+            background-color: #45a049;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 20px;
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>九宫格切图</h1>
+        <div class="form-group">
+            <label for="image">选择图片：</label>
+            <input type="file" id="image" accept="image/*" onchange="previewImage(event)">
+        </div>
+        <div class="image-preview" id="preview"></div>
+        <button onclick="splitImage()">生成九宫格</button>
+        <div class="result" id="result"></div>
+        <button class="back-button" onclick="window.location.href='../tools.html'">返回工具箱</button>
+    </div>
+    <script>
+        let uploadedImage = null;
+        
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            uploadedImage = file;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('preview');
+                preview.innerHTML = `<img src="${e.target.result}" alt="预览图片">`;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        function splitImage() {
+            if (!uploadedImage) {
+                document.getElementById('result').innerHTML = '<p>请先选择图片</p>';
+                return;
+            }
+            
+            const result = document.getElementById('result');
+            const img = document.querySelector('#preview img');
+            
+            if (img) {
+                // 创建一个新的canvas来处理图片
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // 确保图片是正方形的
+                const size = Math.min(img.width, img.height);
+                canvas.width = size;
+                canvas.height = size;
+                
+                // 绘制图片到canvas（居中裁剪）
+                const offsetX = (img.width - size) / 2;
+                const offsetY = (img.height - size) / 2;
+                ctx.drawImage(img, offsetX, offsetY, size, size, 0, 0, size, size);
+                
+                // 计算每个小格子的大小
+                const gridSize = size / 3;
+                
+                // 创建九宫格容器
+                const gridContainer = document.createElement('div');
+                gridContainer.className = 'grid-container';
+                
+                // 分割图片并生成九宫格
+                for (let row = 0; row < 3; row++) {
+                    for (let col = 0; col < 3; col++) {
+                        const gridCanvas = document.createElement('canvas');
+                        gridCanvas.width = gridSize;
+                        gridCanvas.height = gridSize;
+                        const gridCtx = gridCanvas.getContext('2d');
+                        
+                        // 从原始canvas中裁剪出对应的部分
+                        gridCtx.drawImage(
+                            canvas,
+                            col * gridSize,
+                            row * gridSize,
+                            gridSize,
+                            gridSize,
+                            0,
+                            0,
+                            gridSize,
+                            gridSize
+                        );
+                        
+                        // 创建图片元素
+                        const gridItem = document.createElement('div');
+                        gridItem.className = 'grid-item';
+                        const gridImg = document.createElement('img');
+                        gridImg.src = gridCanvas.toDataURL('image/jpeg');
+                        gridItem.appendChild(gridImg);
+                        
+                        // 添加下载功能
+                        gridItem.addEventListener('click', function() {
+                            const link = document.createElement('a');
+                            link.href = gridImg.src;
+                            link.download = `grid_${row}_${col}.jpg`;
+                            link.click();
+                        });
+                        
+                        gridContainer.appendChild(gridItem);
+                    }
+                }
+                
+                result.innerHTML = '<p>九宫格生成完成，点击图片可下载</p>';
+                result.appendChild(gridContainer);
+            } else {
+                result.innerHTML = '<p>切图失败，请重试</p>';
+            }
+        }
+    </script>
+</body>
+</html>

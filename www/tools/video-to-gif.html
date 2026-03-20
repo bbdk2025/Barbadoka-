@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视频转GIF - 巴巴多卡工具箱</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .video-preview {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .video-preview video {
+            max-width: 100%;
+            max-height: 300px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .gif-preview {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .gif-preview img {
+            max-width: 100%;
+            max-height: 300px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .back-button {
+            display: block;
+            margin: 30px auto 0;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .back-button:hover {
+            background-color: #45a049;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 20px;
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>视频转GIF</h1>
+        <div class="form-group">
+            <label for="video">选择视频：</label>
+            <input type="file" id="video" accept="video/*" onchange="previewVideo(event)">
+        </div>
+        <div class="form-group">
+            <label for="duration">截取时长：<span id="duration-value">5</span>秒</label>
+            <input type="range" id="duration" min="1" max="10" value="5" oninput="updateDuration(event)">
+        </div>
+        <div class="form-group">
+            <label for="fps">帧率：<span id="fps-value">10</span>fps</label>
+            <input type="range" id="fps" min="5" max="30" value="10" oninput="updateFPS(event)">
+        </div>
+        <div class="video-preview" id="preview"></div>
+        <button onclick="convertToGIF()">转换为GIF</button>
+        <div class="result" id="result"></div>
+        <button class="back-button" onclick="window.location.href='../tools.html'">返回工具箱</button>
+    </div>
+    <script>
+        let uploadedVideo = null;
+        
+        function updateDuration(event) {
+            document.getElementById('duration-value').textContent = event.target.value;
+        }
+        
+        function updateFPS(event) {
+            document.getElementById('fps-value').textContent = event.target.value;
+        }
+        
+        function previewVideo(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            uploadedVideo = file;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('preview');
+                preview.innerHTML = `<video controls src="${e.target.result}" alt="预览视频"></video>`;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        function convertToGIF() {
+            if (!uploadedVideo) {
+                document.getElementById('result').innerHTML = '<p>请先选择视频</p>';
+                return;
+            }
+            
+            const duration = parseInt(document.getElementById('duration').value);
+            const fps = parseInt(document.getElementById('fps').value);
+            const result = document.getElementById('result');
+            
+            // 模拟视频转GIF过程
+            result.innerHTML = '<p>正在转换，请稍候...</p>';
+            
+            // 实际项目中可以使用Canvas API和gif.js库进行视频转GIF
+            setTimeout(() => {
+                result.innerHTML = `
+                    <p>转换完成！</p>
+                    <div class="gif-preview">
+                        <img src="https://via.placeholder.com/400x300/cccccc/999999?text=GIF+Preview" alt="GIF预览">
+                    </div>
+                    <p>注：由于浏览器限制，本工具仅提供模拟功能。实际项目中需要使用服务器端处理或专业库。</p>
+                `;
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

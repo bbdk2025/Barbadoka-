@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生成二维码 - 巴巴多卡工具箱</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .qrcode-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .back-button {
+            display: block;
+            margin: 30px auto 0;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .back-button:hover {
+            background-color: #45a049;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 20px;
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>生成二维码</h1>
+        <div class="form-group">
+            <label for="text">输入文本/URL：</label>
+            <input type="text" id="text" placeholder="请输入要生成二维码的内容" value="https://github.com/bbdk2025/Barbadoka-">
+        </div>
+        <button onclick="generateQRCode()">生成二维码</button>
+        <div class="result" id="result"></div>
+        <button class="back-button" onclick="window.location.href='../tools.html'">返回工具箱</button>
+    </div>
+    <script>
+        function generateQRCode() {
+            const text = document.getElementById('text').value;
+            const result = document.getElementById('result');
+            
+            if (!text) {
+                result.innerHTML = '<p>请输入要生成二维码的内容</p>';
+                return;
+            }
+            
+            // 使用qrcode.js库生成二维码
+            // 实际项目中需要引入qrcode.js库
+            // 这里使用模拟方式
+            result.innerHTML = `
+                <div class="qrcode-container">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(text)}" alt="二维码">
+                </div>
+                <p>二维码生成完成！</p>
+                <p>注：本工具使用第三方API生成二维码，实际项目中可以使用qrcode.js库在本地生成。</p>
+            `;
+        }
+        
+        // 页面加载时自动生成示例二维码
+        window.onload = generateQRCode;
+    </script>
+</body>
+</html>

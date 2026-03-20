@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片格式转换器 - 巴巴多卡工具箱</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .image-preview {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .image-preview img {
+            max-width: 100%;
+            max-height: 300px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .back-button {
+            display: block;
+            margin: 30px auto 0;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .back-button:hover {
+            background-color: #45a049;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 20px;
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>图片格式转换器</h1>
+        <div class="form-group">
+            <label for="image">选择图片：</label>
+            <input type="file" id="image" accept="image/*" onchange="previewImage(event)">
+        </div>
+        <div class="form-group">
+            <label for="format">选择目标格式：</label>
+            <select id="format">
+                <option value="png">PNG</option>
+                <option value="jpg">JPG</option>
+                <option value="webp">WebP</option>
+            </select>
+        </div>
+        <div class="image-preview" id="preview"></div>
+        <button onclick="convertImage()">转换格式</button>
+        <div class="result" id="result"></div>
+        <button class="back-button" onclick="window.location.href='../tools.html'">返回工具箱</button>
+    </div>
+    <script>
+        let uploadedImage = null;
+        
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            uploadedImage = file;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('preview');
+                preview.innerHTML = `<img src="${e.target.result}" alt="预览图片">`;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        function convertImage() {
+            if (!uploadedImage) {
+                document.getElementById('result').innerHTML = '<p>请先选择图片</p>';
+                return;
+            }
+            
+            const format = document.getElementById('format').value;
+            const result = document.getElementById('result');
+            
+            // 模拟图片格式转换
+            // 实际项目中可以使用Canvas API进行格式转换
+            result.innerHTML = `<p>图片已成功转换为${format}格式</p>`;
+            
+            // 创建下载链接
+            const canvas = document.createElement('canvas');
+            const img = document.querySelector('#preview img');
+            if (img) {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                
+                let mimeType = 'image/png';
+                if (format === 'jpg') mimeType = 'image/jpeg';
+                if (format === 'webp') mimeType = 'image/webp';
+                
+                const dataUrl = canvas.toDataURL(mimeType);
+                const link = document.createElement('a');
+                link.href = dataUrl;
+                link.download = `converted.${format}`;
+                link.textContent = '点击下载转换后的图片';
+                link.style.display = 'block';
+                link.style.marginTop = '10px';
+                link.style.color = '#4CAF50';
+                link.style.textDecoration = 'none';
+                
+                result.appendChild(link);
+            }
+        }
+    </script>
+</body>
+</html>

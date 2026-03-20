@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>巴巴多卡工具箱</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 600px;
+            padding: 20px;
+        }
+        
+        .logo-image {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .app-name {
+            font-size: 36px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 40px;
+        }
+        
+        .enter-button {
+            background-color: #4CAF50;
+            color: white;
+            font-size: 24px;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px;
+            }
+            
+            .app-name {
+                font-size: 28px;
+                margin-bottom: 30px;
+            }
+            
+            .enter-button {
+                font-size: 20px;
+                padding: 12px 30px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .app-name {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+            
+            .enter-button {
+                font-size: 18px;
+                padding: 10px 25px;
+            }
+        }
+        
+        .enter-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="微信图片_20260320142215_20_2.jpg" alt="巴巴多卡" class="logo-image">
+        <h1 class="app-name">巴巴多卡</h1>
+        <button class="enter-button" onclick="window.location.href='tools.html'">进入工具箱</button>
+    </div>
+</body>
+</html>

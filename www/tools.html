@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>巴巴多卡工具箱</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .date-time {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+        }
+        
+        #current-date {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        #lunar-date {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+            
+            .tool-card {
+                padding: 15px;
+            }
+            
+            .tool-card h3 {
+                font-size: 16px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 20px;
+                margin-bottom: 15px;
+            }
+            
+            .tool-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 10px;
+            }
+            
+            .tool-card {
+                padding: 12px;
+            }
+            
+            .tool-card h3 {
+                font-size: 14px;
+            }
+            
+            .back-button {
+                font-size: 14px;
+                padding: 8px 15px;
+            }
+        }
+        
+        .tool-card {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .tool-card h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .back-button {
+            display: block;
+            margin: 30px auto 0;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .back-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="date-time">
+            <div id="current-date"></div>
+            <div id="lunar-date"></div>
+        </div>
+        <h1>巴巴多卡工具箱</h1>
+        <div class="tool-grid">
+            <div class="tool-card" onclick="window.location.href='tools/zipcode.html'">
+                <h3>邮编代码查询</h3>
+            </div>
+            <div class="tool-card" onclick="window.location.href='tools/oil-price.html'">
+                <h3>当前油价查询</h3>
+            </div>
+            <div class="tool-card" onclick="window.location.href='tools/ip.html'">
+                <h3>本机IP查询</h3>
+            </div>
+            <div class="tool-card" onclick="window.location.href='tools/image-converter.html'">
+                <h3>图片格式转换器</h3>
+            </div>
+            <div class="tool-card" onclick="window.location.href='tools/image-compressor.html'">
+                <h3>图片压缩器</h3>
+            </div>
+            <div class="tool-card" onclick="window.location.href='tools/grid-splitter.html'">
+                <h3>九宫格切图</h3>
+            </div>
+            <div class="tool-card" onclick="window.location.href='tools/meme-maker.html'">
+                <h3>表情包制作</h3>
+            </div>
+            <div class="tool-card" onclick="window.location.href='tools/video-to-gif.html'">
+                <h3>视频转GIF</h3>
+            </div>
+            <div class="tool-card" onclick="window.location.href='tools/qrcode.html'">
+                <h3>生成二维码</h3>
+            </div>
+            <div class="tool-card" onclick="window.location.href='tools/morse-code.html'">
+                <h3>生成摩斯密码</h3>
+            </div>
+            <div class="tool-card" onclick="window.location.href='tools/currency-converter.html'">
+                <h3>汇率计算器</h3>
+            </div>
+            <div class="tool-card" onclick="window.location.href='tools/bmi-calculator.html'">
+                <h3>BMI计算器</h3>
+            </div>
+            <div class="tool-card" onclick="window.location.href='tools/relative-calculator.html'">
+                <h3>亲戚关系计算器</h3>
+            </div>
+        </div>
+        <button class="back-button" onclick="window.location.href='index.html'">返回首页</button>
+    </div>
+    <script>
+        // 更新当前日期和时间
+        function updateDateTime() {
+            const now = new Date();
+            const options = {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            
+            const currentDate = now.toLocaleDateString('zh-CN', options);
+            document.getElementById('current-date').textContent = currentDate;
+            
+            // 模拟农历日期（实际项目中可以使用农历库）
+            const lunarMonths = ['正月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '冬月', '腊月'];
+            const lunarDays = ['初一', '初二', '初三', '初四', '初五', '初六', '初七', '初八', '初九', '初十',
+                              '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十',
+                              '廿一', '廿二', '廿三', '廿四', '廿五', '廿六', '廿七', '廿八', '廿九', '三十'];
+            
+            // 简单模拟，实际项目中需要使用农历库
+            const month = now.getMonth();
+            const day = now.getDate() - 1;
+            const lunarDate = `${lunarMonths[month]}${lunarDays[day % lunarDays.length]}`;
+            document.getElementById('lunar-date').textContent = `农历：${lunarDate}`;
+        }
+        
+        // 初始更新
+        updateDateTime();
+        // 每秒更新一次
+        setInterval(updateDateTime, 1000);
+        
+        // 检查更新
+        function checkForUpdates() {
+            // 本地版本
+            const localVersion = "1.0.0";
+            
+            // 尝试从本地version.json文件获取版本
+            fetch('version.json')
+                .then(response => response.json())
+                .then(data => {
+                    const localVersionFromFile = data.version;
+                    // 从GitHub获取远程版本
+                    fetch('https://raw.githubusercontent.com/bbdk2025/Barbadoka-tools/main/version.json')
+                        .then(response => response.json())
+                        .then(data => {
+                            const remoteVersion = data.version;
+                            if (remoteVersion > localVersionFromFile) {
+                                // 显示更新提示
+                                if (confirm('发现新版本，是否更新？')) {
+                                    window.location.href = 'https://github.com/bbdk2025/Barbadoka-tools/releases';
+                                }
+                            }
+                        })
+                        .catch(error => console.error('检查更新失败:', error));
+                })
+                .catch(error => {
+                    console.error('读取本地版本文件失败:', error);
+                    // 如果本地文件读取失败，使用硬编码版本
+                    fetch('https://raw.githubusercontent.com/bbdk2025/Barbadoka-tools/main/version.json')
+                        .then(response => response.json())
+                        .then(data => {
+                            const remoteVersion = data.version;
+                            if (remoteVersion > localVersion) {
+                                // 显示更新提示
+                                if (confirm('发现新版本，是否更新？')) {
+                                    window.location.href = 'https://github.com/bbdk2025/Barbadoka-tools/releases';
+                                }
+                            }
+                        })
+                        .catch(error => console.error('检查更新失败:', error));
+                });
+        }
+        
+        // 页面加载时检查更新
+        window.onload = function() {
+            checkForUpdates();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI计算器 - 巴巴多卡工具箱</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .bmi-range {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+        
+        .back-button {
+            display: block;
+            margin: 30px auto 0;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .back-button:hover {
+            background-color: #45a049;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 20px;
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>BMI计算器</h1>
+        <div class="form-group">
+            <label for="height">身高（cm）：</label>
+            <input type="number" id="height" value="170" min="100" max="250" step="0.1">
+        </div>
+        <div class="form-group">
+            <label for="weight">体重（kg）：</label>
+            <input type="number" id="weight" value="60" min="30" max="200" step="0.1">
+        </div>
+        <button onclick="calculateBMI()">计算BMI</button>
+        <div class="result" id="result"></div>
+        <div class="bmi-range">
+            <h4>BMI范围参考：</h4>
+            <ul>
+                <li>偏瘦：BMI < 18.5</li>
+                <li>正常：18.5 ≤ BMI < 24</li>
+                <li>超重：24 ≤ BMI < 28</li>
+                <li>肥胖：BMI ≥ 28</li>
+            </ul>
+        </div>
+        <button class="back-button" onclick="window.location.href='../tools.html'">返回工具箱</button>
+    </div>
+    <script>
+        function calculateBMI() {
+            const height = parseFloat(document.getElementById('height').value) / 100; // 转换为米
+            const weight = parseFloat(document.getElementById('weight').value);
+            const result = document.getElementById('result');
+            
+            if (isNaN(height) || isNaN(weight) || height <= 0 || weight <= 0) {
+                result.innerHTML = '<p>请输入有效的身高和体重</p>';
+                return;
+            }
+            
+            const bmi = weight / (height * height);
+            let category = '';
+            let color = '';
+            
+            if (bmi < 18.5) {
+                category = '偏瘦';
+                color = '#3498db';
+            } else if (bmi < 24) {
+                category = '正常';
+                color = '#27ae60';
+            } else if (bmi < 28) {
+                category = '超重';
+                color = '#f39c12';
+            } else {
+                category = '肥胖';
+                color = '#e74c3c';
+            }
+            
+            result.innerHTML = `
+                <p>您的BMI值：<span style="font-size: 24px; font-weight: bold; color: ${color};">${bmi.toFixed(2)}</span></p>
+                <p>体重状态：<span style="font-weight: bold; color: ${color};">${category}</span></p>
+            `;
+        }
+        
+        // 页面加载时自动计算
+        window.onload = calculateBMI;
+    </script>
+</body>
+</html>

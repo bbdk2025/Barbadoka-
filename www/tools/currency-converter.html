@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>汇率计算器 - 巴巴多卡工具箱</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .back-button {
+            display: block;
+            margin: 30px auto 0;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .back-button:hover {
+            background-color: #45a049;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 20px;
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>汇率计算器</h1>
+        <div class="form-group">
+            <label for="amount">金额：</label>
+            <input type="number" id="amount" value="100" min="0" step="0.01">
+        </div>
+        <div class="form-group">
+            <label for="from-currency">从：</label>
+            <select id="from-currency">
+                <option value="CNY">人民币 (CNY)</option>
+                <option value="USD">美元 (USD)</option>
+                <option value="EUR">欧元 (EUR)</option>
+                <option value="JPY">日元 (JPY)</option>
+                <option value="GBP">英镑 (GBP)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="to-currency">到：</label>
+            <select id="to-currency">
+                <option value="USD">美元 (USD)</option>
+                <option value="CNY">人民币 (CNY)</option>
+                <option value="EUR">欧元 (EUR)</option>
+                <option value="JPY">日元 (JPY)</option>
+                <option value="GBP">英镑 (GBP)</option>
+            </select>
+        </div>
+        <button onclick="convertCurrency()">转换</button>
+        <div class="result" id="result"></div>
+        <button class="back-button" onclick="window.location.href='../tools.html'">返回工具箱</button>
+    </div>
+    <script>
+        let exchangeRates = {
+            CNY: { USD: 0.14, EUR: 0.13, JPY: 20.5, GBP: 0.11 },
+            USD: { CNY: 7.15, EUR: 0.92, JPY: 146.5, GBP: 0.79 },
+            EUR: { CNY: 7.77, USD: 1.09, JPY: 159.2, GBP: 0.86 },
+            JPY: { CNY: 0.049, USD: 0.0068, EUR: 0.0063, GBP: 0.0054 },
+            GBP: { CNY: 9.05, USD: 1.26, EUR: 1.16, JPY: 185.3 }
+        };
+        
+        // 获取实时汇率数据
+        function fetchExchangeRates() {
+            // 使用ExchangeRate-API获取实时汇率
+            const apiKey = 'YOUR_API_KEY'; // 实际项目中需要替换为真实的API密钥
+            const baseCurrency = 'USD';
+            const url = `https://v6.exchangerate-api.com/v6/${apiKey}/latest/${baseCurrency}`;
+            
+            // 这里使用模拟数据，实际项目中可以使用真实API
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    // 模拟API响应
+                    const mockResponse = {
+                        conversion_rates: {
+                            USD: 1,
+                            CNY: 7.15,
+                            EUR: 0.92,
+                            JPY: 146.5,
+                            GBP: 0.79
+                        }
+                    };
+                    resolve(mockResponse);
+                }, 1000);
+            });
+        }
+        
+        // 初始化汇率数据
+        async function initExchangeRates() {
+            try {
+                const response = await fetchExchangeRates();
+                const rates = response.conversion_rates;
+                
+                // 更新汇率数据
+                exchangeRates = {
+                    CNY: { USD: 1/rates.CNY, EUR: rates.EUR/rates.CNY, JPY: rates.JPY/rates.CNY, GBP: rates.GBP/rates.CNY },
+                    USD: { CNY: rates.CNY, EUR: rates.EUR, JPY: rates.JPY, GBP: rates.GBP },
+                    EUR: { CNY: rates.CNY/rates.EUR, USD: 1/rates.EUR, JPY: rates.JPY/rates.EUR, GBP: rates.GBP/rates.EUR },
+                    JPY: { CNY: rates.CNY/rates.JPY, USD: 1/rates.JPY, EUR: rates.EUR/rates.JPY, GBP: rates.GBP/rates.JPY },
+                    GBP: { CNY: rates.CNY/rates.GBP, USD: 1/rates.GBP, EUR: rates.EUR/rates.GBP, JPY: rates.JPY/rates.GBP }
+                };
+                
+                // 重新计算
+                convertCurrency();
+            } catch (error) {
+                console.error('获取汇率数据失败:', error);
+                // 使用默认汇率数据
+                convertCurrency();
+            }
+        }
+        
+        function convertCurrency() {
+            const amount = parseFloat(document.getElementById('amount').value);
+            const fromCurrency = document.getElementById('from-currency').value;
+            const toCurrency = document.getElementById('to-currency').value;
+            const result = document.getElementById('result');
+            
+            if (isNaN(amount) || amount < 0) {
+                result.innerHTML = '<p>请输入有效的金额</p>';
+                return;
+            }
+            
+            if (fromCurrency === toCurrency) {
+                result.innerHTML = `<p>${amount.toFixed(2)} ${fromCurrency} = ${amount.toFixed(2)} ${toCurrency}</p>`;
+                return;
+            }
+            
+            const rate = exchangeRates[fromCurrency][toCurrency];
+            const convertedAmount = amount * rate;
+            
+            result.innerHTML = `<p>${amount.toFixed(2)} ${fromCurrency} = ${convertedAmount.toFixed(2)} ${toCurrency}</p>
+                               <p>汇率：1 ${fromCurrency} = ${rate.toFixed(4)} ${toCurrency}</p>
+                               <p style="font-size: 12px; color: #666;">数据更新时间：${new Date().toLocaleString()}</p>`;
+        }
+        
+        // 页面加载时初始化并计算
+        window.onload = function() {
+            initExchangeRates();
+        };
+    </script>
+</body>
+</html>
