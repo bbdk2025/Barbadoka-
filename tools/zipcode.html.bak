@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>邮编代码查询 - 巴巴多卡工具箱</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .back-button {
+            display: block;
+            margin: 30px auto 0;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .back-button:hover {
+            background-color: #45a049;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 20px;
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>邮编代码查询</h1>
+        <div class="form-group">
+            <label for="province">选择省份：</label>
+            <select id="province" onchange="updateCities()">
+                <option value="">请选择省份</option>
+                <option value="beijing">北京市</option>
+                <option value="shanghai">上海市</option>
+                <option value="guangdong">广东省</option>
+                <option value="zhejiang">浙江省</option>
+                <option value="jiangsu">江苏省</option>
+                <option value="sichuan">四川省</option>
+                <option value="hubei">湖北省</option>
+                <option value="hunan">湖南省</option>
+                <option value="guangxi">广西壮族自治区</option>
+                <option value="anhui">安徽省</option>
+                <option value="fujian">福建省</option>
+                <option value="jiangxi">江西省</option>
+                <option value="shandong">山东省</option>
+                <option value="henan">河南省</option>
+                <option value="hebei">河北省</option>
+                <option value="shanxi">山西省</option>
+                <option value="liaoning">辽宁省</option>
+                <option value="jilin">吉林省</option>
+                <option value="heilongjiang">黑龙江省</option>
+                <option value="yunnan">云南省</option>
+                <option value="guizhou">贵州省</option>
+                <option value="shaanxi">陕西省</option>
+                <option value="gansu">甘肃省</option>
+                <option value="inner_mongolia">内蒙古自治区</option>
+                <option value="xinjiang">新疆维吾尔自治区</option>
+                <option value="tibet">西藏自治区</option>
+                <option value="ningxia">宁夏回族自治区</option>
+                <option value="hainan">海南省</option>
+                <option value="chongqing">重庆市</option>
+                <option value="tianjin">天津市</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="city">选择城市：</label>
+            <select id="city" onchange="updateDistricts()">
+                <option value="">请先选择省份</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="district">选择区县：</label>
+            <select id="district">
+                <option value="">请先选择城市</option>
+            </select>
+        </div>
+        <button onclick="searchZipCode()">查询邮编</button>
+        <div class="result" id="result"></div>
+        <button class="back-button" onclick="window.location.href='../tools.html'">返回工具箱</button>
+    </div>
+    <script>
+        // 地区数据
+        var regions = {
+            beijing: {
+                name: '北京市',
+                cities: {
+                    beijing: { name: '北京市', districts: { chaoyang: { name: '朝阳区', zipcode: '100020' }, haidian: { name: '海淀区', zipcode: '100080' }, dongcheng: { name: '东城区', zipcode: '100010' }, xicheng: { name: '西城区', zipcode: '100032' } } }
+                }
+            },
+            shanghai: {
+                name: '上海市',
+                cities: {
+                    shanghai: { name: '上海市', districts: { pudong: { name: '浦东新区', zipcode: '200120' }, huangpu: { name: '黄浦区', zipcode: '200001' }, xuhui: { name: '徐汇区', zipcode: '200030' } } }
+                }
+            },
+            guangdong: {
+                name: '广东省',
+                cities: {
+                    guangzhou: { name: '广州市', districts: { tianhe: { name: '天河区', zipcode: '510630' }, liwan: { name: '荔湾区', zipcode: '510145' }, yuexiu: { name: '越秀区', zipcode: '510030' } } },
+                    shenzhen: { name: '深圳市', districts: { nanshan: { name: '南山区', zipcode: '518052' }, futian: { name: '福田区', zipcode: '518033' }, luohu: { name: '罗湖区', zipcode: '518001' } } },
+                    foshan: { name: '佛山市', districts: { chancheng: { name: '禅城区', zipcode: '528000' }, nanhai: { name: '南海区', zipcode: '528200' }, shunde: { name: '顺德区', zipcode: '528300' } } },
+                    zhuhai: { name: '珠海市', districts: { xiangzhou: { name: '香洲区', zipcode: '519000' }, jinwan: { name: '金湾区', zipcode: '519090' }, doumen: { name: '斗门区', zipcode: '519100' } } }
+                }
+            },
+            zhejiang: {
+                name: '浙江省',
+                cities: {
+                    hangzhou: { name: '杭州市', districts: { xihu: { name: '西湖区', zipcode: '310012' }, shangcheng: { name: '上城区', zipcode: '310002' }, xiacheng: { name: '下城区', zipcode: '310006' } } },
+                    ningbo: { name: '宁波市', districts: { haishu: { name: '海曙区', zipcode: '315000' }, jiangbei: { name: '江北区', zipcode: '315020' }, zhenhai: { name: '镇海区', zipcode: '315200' } } },
+                    wenzhou: { name: '温州市', districts: { lucheng: { name: '鹿城区', zipcode: '325000' }, longwan: { name: '龙湾区', zipcode: '325024' }, ouhai: { name: '瓯海区', zipcode: '325016' } } },
+                    jiaxing: { name: '嘉兴市', districts: { nanhu: { name: '南湖区', zipcode: '314000' }, xiuzhou: { name: '秀洲区', zipcode: '314000' }, haining: { name: '海宁市', zipcode: '314400' } } },
+                    huzhou: { name: '湖州市', districts: { wuxing: { name: '吴兴区', zipcode: '313000' }, nanxun: { name: '南浔区', zipcode: '313009' }, deqing: { name: '德清县', zipcode: '313200' }, anji: { name: '安吉县', zipcode: '313300' }, changxing: { name: '长兴县', zipcode: '313100' } } },
+                    shaoxing: { name: '绍兴市', districts: { '越城区': { name: '越城区', zipcode: '312000' }, keqiao: { name: '柯桥区', zipcode: '312030' }, xinchang: { name: '新昌县', zipcode: '312500' } } },
+                    jinhua: { name: '金华市', districts: { wucheng: { name: '婺城区', zipcode: '321000' }, jindong: { name: '金东区', zipcode: '321015' }, lanxi: { name: '兰溪市', zipcode: '321100' } } },
+                    quzhou: { name: '衢州市', districts: { qujiang: { name: '衢江区', zipcode: '324000' }, kejie: { name: '柯城区', zipcode: '324000' }, longyou: { name: '龙游县', zipcode: '324400' } } },
+                    zhoushan: { name: '舟山市', districts: { zhoushan: { name: '定海区', zipcode: '316000' }, putuo: { name: '普陀区', zipcode: '316100' }, daishan: { name: '岱山县', zipcode: '316200' } } },
+                    taizhou: { name: '台州市', districts: { taizhou: { name: '椒江区', zipcode: '318000' }, huangyan: { name: '黄岩区', zipcode: '318020' }, luqiao: { name: '路桥区', zipcode: '318050' } } },
+                    lishui: { name: '丽水市', districts: { lishui: { name: '莲都区', zipcode: '323000' }, qingtian: { name: '青田县', zipcode: '323900' },云和: { name: '云和县', zipcode: '323600' } } }
+                }
+            },
+            jiangsu: {
+                name: '江苏省',
+                cities: {
+                    nanjing: { name: '南京市', districts: { xuanwu: { name: '玄武区', zipcode: '210018' }, qinhuai: { name: '秦淮区', zipcode: '210001' }, jianye: { name: '建邺区', zipcode: '210019' } } },
+                    suzhou: { name: '苏州市', districts: { gusu: { name: '姑苏区', zipcode: '215000' }, wuzhong: { name: '吴中区', zipcode: '215128' }, xiangcheng: { name: '相城区', zipcode: '215131' } } },
+                    wuxi: { name: '无锡市', districts: { chongan: { name: '崇安区', zipcode: '214001' }, nanchang: { name: '南长区', zipcode: '214021' }, beitang: { name: '北塘区', zipcode: '214044' } } }
+                }
+            },
+            sichuan: {
+                name: '四川省',
+                cities: {
+                    chengdu: { name: '成都市', districts: { jinjiang: { name: '锦江区', zipcode: '610011' }, qingyang: { name: '青羊区', zipcode: '610031' }, wuhou: { name: '武侯区', zipcode: '610041' } } },
+                    mianyang: { name: '绵阳市', districts: { fucheng: { name: '涪城区', zipcode: '621000' }, youxian: { name: '游仙区', zipcode: '621000' }, anzhou: { name: '安州区', zipcode: '622650' } } },
+                    deyang: { name: '德阳市', districts: { jingyang: { name: '旌阳区', zipcode: '618000' }, shifang: { name: '什邡市', zipcode: '618400' }, mianzhu: { name: '绵竹市', zipcode: '618200' } } }
+                }
+            },
+            guangxi: {
+                name: '广西壮族自治区',
+                cities: {
+                    nanning: { name: '南宁市', districts: { xingning: { name: '兴宁区', zipcode: '530012' }, qingxiu: { name: '青秀区', zipcode: '530022' }, xixiangtang: { name: '西乡塘区', zipcode: '530001' } } },
+                    liuzhou: { name: '柳州市', districts: { liubei: { name: '柳北区', zipcode: '545000' }, liunan: { name: '柳南区', zipcode: '545005' }, yufeng: { name: '鱼峰区', zipcode: '545005' }, chengzhong: { name: '城中区', zipcode: '545002' }, liuzhou: { name: '柳江区', zipcode: '545100' }, sanjiang: { name: '三江侗族自治县', zipcode: '545500' }, rongshui: { name: '融水苗族自治县', zipcode: '545300' }, rongan: { name: '融安县', zipcode: '545400' } } },
+                    guilin: { name: '桂林市', districts: { xiangshan: { name: '象山区', zipcode: '541002' }, diecai: { name: '叠彩区', zipcode: '541001' }, lingui: { name: '临桂区', zipcode: '541100' } } },
+                    wuzhou: { name: '梧州市', districts: { changzhou: { name: '长洲区', zipcode: '543002' }, wanxiu: { name: '万秀区', zipcode: '543000' }, chengzhong: { name: '城中区', zipcode: '543000' } } },
+                    beihai: { name: '北海市', districts: { haicheng: { name: '海城区', zipcode: '536000' }, yinhai: { name: '银海区', zipcode: '536000' }, tiexiang: { name: '铁山港区', zipcode: '536017' } } },
+                    fangchenggang: { name: '防城港市', districts: { port: { name: '港口区', zipcode: '538000' }, dongxing: { name: '东兴市', zipcode: '538100' }, fangcheng: { name: '防城区', zipcode: '538021' } } },
+                    qinzhou: { name: '钦州市', districts: { qinnan: { name: '钦南区', zipcode: '535000' }, qinbei: { name: '钦北区', zipcode: '535000' }, lingang: { name: '临港工业区', zipcode: '535008' } } },
+                    guigang: { name: '贵港市', districts: { gangbei: { name: '港北区', zipcode: '537100' }, gangnan: { name: '港南区', zipcode: '537132' }, pingnan: { name: '平南县', zipcode: '537300' } } },
+                    yulin: { name: '玉林市', districts: { yuzhou: { name: '玉州区', zipcode: '537000' }, beiliu: { name: '北流市', zipcode: '537400' }, rongxian: { name: '容县', zipcode: '537500' } } },
+                    baise: { name: '百色市', districts: { youjiang: { name: '右江区', zipcode: '533000' }, tiandong: { name: '田东县', zipcode: '531500' }, debao: { name: '德保县', zipcode: '533700' } } },
+                    hezhou: { name: '贺州市', districts: { babu: { name: '八步区', zipcode: '542800' }, pinggui: { name: '平桂区', zipcode: '542800' }, fuchuan: { name: '富川县', zipcode: '542700' } } },
+                    hechi: { name: '河池市', districts: { yizhou: { name: '宜州区', zipcode: '546300' }, jinchengjiang: { name: '金城江区', zipcode: '547000' }, duan: { name: '都安县', zipcode: '530700' } } },
+                    laibin: { name: '来宾市', districts: { xingbin: { name: '兴宾区', zipcode: '546100' }, '象州': { name: '象州县', zipcode: '545800' }, wuxuan: { name: '武宣县', zipcode: '545900' } } },
+                    chongzuo: { name: '崇左市', districts: { jiangzhou: { name: '江州区', zipcode: '532200' }, pingxiang: { name: '凭祥市', zipcode: '532600' }, longzhou: { name: '龙州县', zipcode: '532400' } } }
+                }
+            },
+            hunan: {
+                name: '湖南省',
+                cities: {
+                    changsha: { name: '长沙市', districts: { tianxin: { name: '天心区', zipcode: '410002' }, yuelu: { name: '岳麓区', zipcode: '410006' }, kaifu: { name: '开福区', zipcode: '410005' } } },
+                    zhuzhou: { name: '株洲市', districts: { tianyuan: { name: '天元区', zipcode: '412000' }, hetang: { name: '荷塘区', zipcode: '412000' }, lianyuan: { name: '涟源市', zipcode: '417100' } } },
+                    xiangtan: { name: '湘潭市', districts: { yuetang: { name: '雨湖区', zipcode: '411100' }, xiangtan: { name: '湘潭县', zipcode: '411200' }, shaoshan: { name: '韶山市', zipcode: '411300' } } }
+                }
+            },
+            hubei: {
+                name: '湖北省',
+                cities: {
+                    wuhan: { name: '武汉市', districts: { jianghan: { name: '江汉区', zipcode: '430022' }, jiangan: { name: '江岸区', zipcode: '430014' }, qiaokou: { name: '硚口区', zipcode: '430033' } } },
+                    xiangyang: { name: '襄阳市', districts: { xiangcheng: { name: '襄城区', zipcode: '441000' }, fancheng: { name: '樊城区', zipcode: '441000' }, xinfeng: { name: '襄州区', zipcode: '441100' } } },
+                    yichang: { name: '宜昌市', districts: { xiling: { name: '西陵区', zipcode: '443000' }, wujia: { name: '伍家岗区', zipcode: '443001' }, dianchi: { name: '点军区', zipcode: '443004' } } }
+                }
+            },
+            anhui: {
+                name: '安徽省',
+                cities: {
+                    hefei: { name: '合肥市', districts: { yaohai: { name: '瑶海区', zipcode: '230011' }, shushan: { name: '蜀山区', zipcode: '230031' }, luyang: { name: '庐阳区', zipcode: '230001' } } },
+                    wuhu: { name: '芜湖市', districts: { yijiang: { name: '弋江区', zipcode: '241000' }, jinghu: { name: '镜湖区', zipcode: '241000' }, sanji: { name: '三山区', zipcode: '241000' } } },
+                    bengbu: { name: '蚌埠市', districts: { bengshan: { name: '蚌山区', zipcode: '233000' }, longzihu: { name: '龙子湖区', zipcode: '233000' }, yuhui: { name: '禹会区', zipcode: '233010' } } }
+                }
+            },
+            fujian: {
+                name: '福建省',
+                cities: {
+                    fuzhou: { name: '福州市', districts: { gulou: { name: '鼓楼区', zipcode: '350001' }, taijiang: { name: '台江区', zipcode: '350004' }, cangshan: { name: '仓山区', zipcode: '350007' } } },
+                    xiamen: { name: '厦门市', districts: { siming: { name: '思明区', zipcode: '361001' }, haicang: { name: '海沧区', zipcode: '361026' }, huli: { name: '湖里区', zipcode: '361006' } } },
+                    quanzhou: { name: '泉州市', districts: { licheng: { name: '鲤城区', zipcode: '362000' }, fengze: { name: '丰泽区', zipcode: '362000' }, luojiang: { name: '洛江区', zipcode: '362011' } } }
+                }
+            },
+            jiangxi: {
+                name: '江西省',
+                cities: {
+                    nanchang: { name: '南昌市', districts: { donghu: { name: '东湖区', zipcode: '330000' }, xihu: { name: '西湖区', zipcode: '330009' }, qingyunpu: { name: '青云谱区', zipcode: '330001' } } },
+                    jiujiang: { name: '九江市', districts: { xunyang: { name: '浔阳区', zipcode: '332000' }, lianxi: { name: '濂溪区', zipcode: '332000' }, chaisang: { name: '柴桑区', zipcode: '332100' } } },
+                    ganzhou: { name: '赣州市', districts: { zhanggong: { name: '章贡区', zipcode: '341000' }, nankang: { name: '南康区', zipcode: '341400' }, ganxian: { name: '赣县区', zipcode: '341100' } } }
+                }
+            },
+            shandong: {
+                name: '山东省',
+                cities: {
+                    jinan: { name: '济南市', districts: { lixia: { name: '历下区', zipcode: '250013' }, shizhong: { name: '市中区', zipcode: '250002' }, huaiyin: { name: '槐荫区', zipcode: '250021' } } },
+                    qingdao: { name: '青岛市', districts: { shinan: { name: '市南区', zipcode: '266071' }, shibei: { name: '市北区', zipcode: '266011' }, licang: { name: '李沧区', zipcode: '266041' } } },
+                    zibo: { name: '淄博市', districts: { zhangdian: { name: '张店区', zipcode: '255000' }, zichuan: { name: '淄川区', zipcode: '255100' }, boshan: { name: '博山区', zipcode: '255200' } } }
+                }
+            },
+            henan: {
+                name: '河南省',
+                cities: {
+                    zhengzhou: { name: '郑州市', districts: { zhongyuan: { name: '中原区', zipcode: '450007' }, erqi: { name: '二七区', zipcode: '450000' }, jinshui: { name: '金水区', zipcode: '450003' } } },
+                    luoyang: { name: '洛阳市', districts: { xigong: { name: '西工区', zipcode: '471000' }, laocheng: { name: '老城区', zipcode: '471002' }, jianxi: { name: '涧西区', zipcode: '471003' } } },
+                    kaifeng: { name: '开封市', districts: { gulou: { name: '鼓楼区', zipcode: '475000' }, longting: { name: '龙亭区', zipcode: '475000' }, shunhe: { name: '顺河区', zipcode: '475001' } } }
+                }
+            },
+            hebei: {
+                name: '河北省',
+                cities: {
+                    shijiazhuang: { name: '石家庄市', districts: { changan: { name: '长安区', zipcode: '050011' }, qiaodong: { name: '桥东区', zipcode: '050011' }, xinhua: { name: '新华区', zipcode: '050051' } } },
+                    tangshan: { name: '唐山市', districts: { lubei: { name: '路北区', zipcode: '063000' }, lunan: { name: '路南区', zipcode: '063017' }, fengnan: { name: '丰南区', zipcode: '063300' } } },
+                    qinhuangdao: { name: '秦皇岛市', districts: { haigang: { name: '海港区', zipcode: '066000' }, beidaihe: { name: '北戴河区', zipcode: '066100' }, shanhaiguan: { name: '山海关区', zipcode: '066200' } } }
+                }
+            },
+            shanxi: {
+                name: '山西省',
+                cities: {
+                    taiyuan: { name: '太原市', districts: { xinghualing: { name: '杏花岭区', zipcode: '030001' }, yingze: { name: '迎泽区', zipcode: '030001' }, jiancaoping: { name: '尖草坪区', zipcode: '030023' } } },
+                    datong: { name: '大同市', districts: { xuanhua: { name: '宣化区', zipcode: '075100' }, yungang: { name: '云冈区', zipcode: '037000' }, xinrong: { name: '新荣区', zipcode: '037002' } } },
+                    changzhi: { name: '长治市', districts: { lucheng: { name: '潞城区', zipcode: '047500' }, chengqu: { name: '城区', zipcode: '046000' }, jiaoqu: { name: '郊区', zipcode: '046011' } } }
+                }
+            },
+            liaoning: {
+                name: '辽宁省',
+                cities: {
+                    shenyang: { name: '沈阳市', districts: { heping: { name: '和平区', zipcode: '110001' }, shenhe: { name: '沈河区', zipcode: '110011' }, huanggu: { name: '皇姑区', zipcode: '110031' } } },
+                    dalian: { name: '大连市', districts: { zhongshan: { name: '中山区', zipcode: '116001' }, xigang: { name: '西岗区', zipcode: '116011' }, shahekou: { name: '沙河口区', zipcode: '116021' } } },
+                    anshan: { name: '鞍山市', districts: { tianqiao: { name: '铁西区', zipcode: '114011' }, tiexi: { name: '铁东区', zipcode: '114001' }, lishan: { name: '立山区', zipcode: '114031' } } }
+                }
+            },
+            jilin: {
+                name: '吉林省',
+                cities: {
+                    changchun: { name: '长春市', districts: { nanling: { name: '南岭区', zipcode: '130022' }, chaoyang: { name: '朝阳区', zipcode: '130012' }, nanguan: { name: '南关区', zipcode: '130022' } } },
+                    jilin: { name: '吉林市', districts: { chuanying: { name: '船营区', zipcode: '132011' }, changyi: { name: '昌邑区', zipcode: '132001' }, longtan: { name: '龙潭区', zipcode: '132021' } } },
+                    siping: { name: '四平市', districts: { tiexi: { name: '铁西区', zipcode: '136000' }, tianqiao: { name: '铁东区', zipcode: '136001' }, yitong: { name: '伊通县', zipcode: '130700' } } }
+                }
+            },
+            heilongjiang: {
+                name: '黑龙江省',
+                cities: {
+                    harbin: { name: '哈尔滨市', districts: { daoli: { name: '道里区', zipcode: '150010' }, daowai: { name: '道外区', zipcode: '150020' }, nangang: { name: '南岗区', zipcode: '150001' } } },
+                    qiqihar: { name: '齐齐哈尔市', districts: { nianzishan: { name: '碾子山区', zipcode: '161046' }, fularji: { name: '富拉尔基区', zipcode: '161041' }, nanshan: { name: '南山区', zipcode: '161000' } } },
+                    mudanjiang: { name: '牡丹江市', districts: { dongan: { name: '东安区', zipcode: '157000' }, xin: { name: '西安区', zipcode: '157000' }, yangming: { name: '阳明区', zipcode: '157013' } } }
+                }
+            },
+            yunnan: {
+                name: '云南省',
+                cities: {
+                    kunming: { name: '昆明市', districts: { panlong: { name: '盘龙区', zipcode: '650051' }, wuhua: { name: '五华区', zipcode: '650031' }, guandu: { name: '官渡区', zipcode: '650220' } } },
+                    dali: { name: '大理市', districts: { dali: { name: '大理市', zipcode: '671000' }, erhai: { name: '洱海', zipcode: '671000' }, xizhou: { name: '喜洲', zipcode: '671207' } } },
+                    lijiang: { name: '丽江市', districts: { gucheng: { name: '古城区', zipcode: '674100' }, yulong: { name: '玉龙县', zipcode: '674100' }, ninglang: { name: '宁蒗县', zipcode: '674300' } } }
+                }
+            },
+            guizhou: {
+                name: '贵州省',
+                cities: {
+                    guiyang: { name: '贵阳市', districts: { yunyan: { name: '云岩区', zipcode: '550001' }, nanming: { name: '南明区', zipcode: '550002' }, huaxi: { name: '花溪区', zipcode: '550025' } } },
+                    zunyi: { name: '遵义市', districts: { honghuagang: { name: '红花岗区', zipcode: '563000' }, huichuan: { name: '汇川区', zipcode: '563000' }, meitan: { name: '湄潭县', zipcode: '564100' } } },
+                    liupanshui: { name: '六盘水市', districts: { zhongshan: { name: '钟山区', zipcode: '553000' }, shuicheng: { name: '水城县', zipcode: '553000' }, panzhou: { name: '盘州市', zipcode: '561601' } } }
+                }
+            },
+            shaanxi: {
+                name: '陕西省',
+                cities: {
+                    xian: { name: '西安市', districts: { beilin: { name: '碑林区', zipcode: '710001' }, xincheng: { name: '新城区', zipcode: '710004' }, lianhu: { name: '莲湖区', zipcode: '710003' } } },
+                    baoji: { name: '宝鸡市', districts: { jintai: { name: '金台区', zipcode: '721001' }, weibin: { name: '渭滨区', zipcode: '721000' }, chencang: { name: '陈仓区', zipcode: '721300' } } },
+                    hanzhong: { name: '汉中市', districts: { hanjiang: { name: '汉台区', zipcode: '723000' }, nanzheng: { name: '南郑区', zipcode: '723100' }, chengxian: { name: '城固县', zipcode: '723200' } } }
+                }
+            },
+            gansu: {
+                name: '甘肃省',
+                cities: {
+                    lanzhou: { name: '兰州市', districts: { chengguan: { name: '城关区', zipcode: '730030' }, qilihe: { name: '七里河区', zipcode: '730050' }, xigu: { name: '西固区', zipcode: '730060' } } },
+                    tianzhu: { name: '天祝县', districts: { huangcheng: { name: '黄城镇', zipcode: '733200' }, dongzhan: { name: '东寨镇', zipcode: '733200' }, jiuquan: { name: '酒泉', zipcode: '735000' } } },
+                    wuwei: { name: '武威市', districts: { liangzhou: { name: '凉州区', zipcode: '733000' }, minqin: { name: '民勤县', zipcode: '733300' }, tianzhu: { name: '天祝县', zipcode: '733200' } } }
+                }
+            },
+            inner_mongolia: {
+                name: '内蒙古自治区',
+                cities: {
+                    huhehaote: { name: '呼和浩特市', districts: { huimin: { name: '回民区', zipcode: '010030' }, xincheng: { name: '新城区', zipcode: '010010' }, yuquan: { name: '玉泉区', zipcode: '010031' } } },
+                    baotou: { name: '包头市', districts: { donghe: { name: '东河区', zipcode: '014040' }, qingshan: { name: '青山区', zipcode: '014030' }, kundulun: { name: '昆都仑区', zipcode: '014010' } } },
+                    ordos: { name: '鄂尔多斯市', districts: { dongsheng: { name: '东胜区', zipcode: '017000' }, kangbashi: { name: '康巴什区', zipcode: '017000' }, dalate: { name: '达拉特旗', zipcode: '014300' } } }
+                }
+            },
+            xinjiang: {
+                name: '新疆维吾尔自治区',
+                cities: {
+                    urumqi: { name: '乌鲁木齐市', districts: { tianshan: { name: '天山区', zipcode: '830002' }, shayibake: { name: '沙依巴克区', zipcode: '830000' }, xinshi: { name: '新市区', zipcode: '830011' } } },
+                    kashgar: { name: '喀什市', districts: { kashgar: { name: '喀什市', zipcode: '844000' }, shache: { name: '莎车县', zipcode: '844700' }, yecheng: { name: '叶城县', zipcode: '844900' } } },
+                    ili: { name: '伊犁州', districts: { yining: { name: '伊宁市', zipcode: '835000' }, qapqal: { name: '察布查尔县', zipcode: '835300' }, huocheng: { name: '霍城县', zipcode: '835200' } } }
+                }
+            },
+            tibet: {
+                name: '西藏自治区',
+                cities: {
+                    lhasa: { name: '拉萨市', districts: { chengguan: { name: '城关区', zipcode: '850000' }, dagze: { name: '达孜区', zipcode: '850100' }, qushui: { name: '曲水县', zipcode: '850600' } } }
+                }
+            },
+            ningxia: {
+                name: '宁夏回族自治区',
+                cities: {
+                    yinchuan: { name: '银川市', districts: { xingqing: { name: '兴庆区', zipcode: '750001' }, jinfeng: { name: '金凤区', zipcode: '750002' }, xixia: { name: '西夏区', zipcode: '750021' } } },
+                    shizuishan: { name: '石嘴山市', districts: { dawan: { name: '大武口区', zipcode: '753000' }, pingluo: { name: '平罗县', zipcode: '753400' },惠农: { name: '惠农区', zipcode: '753600' } } }
+                }
+            },
+            hainan: {
+                name: '海南省',
+                cities: {
+                    haikou: { name: '海口市', districts: { longhua: { name: '龙华区', zipcode: '570100' }, meilan: { name: '美兰区', zipcode: '570203' }, qiongshan: { name: '琼山区', zipcode: '571100' } } },
+                    sanya: { name: '三亚市', districts: { jiyang: { name: '吉阳区', zipcode: '572099' }, haitang: { name: '海棠区', zipcode: '572013' }, yalong: { name: '亚龙湾', zipcode: '572016' } } }
+                }
+            },
+            chongqing: {
+                name: '重庆市',
+                cities: {
+                    chongqing: { name: '重庆市', districts: { yuzhong: { name: '渝中区', zipcode: '400010' }, dadukou: { name: '大渡口区', zipcode: '400080' }, jiangbei: { name: '江北区', zipcode: '400020' } } }
+                }
+            },
+            tianjin: {
+                name: '天津市',
+                cities: {
+                    tianjin: { name: '天津市', districts: { heping: { name: '和平区', zipcode: '300041' }, hexi: { name: '河西区', zipcode: '300202' }, hebei: { name: '河北区', zipcode: '300143' } } }
+                }
+            }
+        };
+        
+        // 更新城市列表
+        function updateCities() {
+            var province = document.getElementById('province').value;
+            var citySelect = document.getElementById('city');
+            var districtSelect = document.getElementById('district');
+            
+            // 清空城市和区县选择
+            citySelect.innerHTML = '<option value="">请选择城市</option>';
+            districtSelect.innerHTML = '<option value="">请先选择城市</option>';
+            
+            if (province && regions[province]) {
+                var cities = regions[province].cities;
+                for (var key in cities) {
+                    if (cities.hasOwnProperty(key)) {
+                        var city = cities[key];
+                        var option = document.createElement('option');
+                        option.value = key;
+                        option.textContent = city.name;
+                        citySelect.appendChild(option);
+                    }
+                }
+            }
+        }
+        
+        // 更新区县列表
+        function updateDistricts() {
+            var province = document.getElementById('province').value;
+            var city = document.getElementById('city').value;
+            var districtSelect = document.getElementById('district');
+            
+            // 清空区县选择
+            districtSelect.innerHTML = '<option value="">请选择区县</option>';
+            
+            if (province && city && regions[province] && regions[province].cities[city]) {
+                var districts = regions[province].cities[city].districts;
+                for (var key in districts) {
+                    if (districts.hasOwnProperty(key)) {
+                        var district = districts[key];
+                        var option = document.createElement('option');
+                        option.value = key;
+                        option.textContent = district.name;
+                        districtSelect.appendChild(option);
+                    }
+                }
+            }
+        }
+        
+        // 查询邮编
+        function searchZipCode() {
+            var province = document.getElementById('province').value;
+            var city = document.getElementById('city').value;
+            var district = document.getElementById('district').value;
+            var result = document.getElementById('result');
+            
+            if (!province || !city || !district) {
+                result.innerHTML = '<p>请选择完整的地区信息</p>';
+                return;
+            }
+            
+            if (regions[province] && regions[province].cities[city] && regions[province].cities[city].districts[district]) {
+                var districtInfo = regions[province].cities[city].districts[district];
+                var provinceName = regions[province].name;
+                var cityName = regions[province].cities[city].name;
+                var districtName = districtInfo.name;
+                var zipcode = districtInfo.zipcode;
+                
+                result.innerHTML = '<p>省份：' + provinceName + '</p><p>城市：' + cityName + '</p><p>区县：' + districtName + '</p><p>邮编：' + zipcode + '</p>';
+            } else {
+                result.innerHTML = '<p>未找到对应邮编</p>';
+            }
+        }
+    </script>
+</body>
+</html>
